@@ -114,6 +114,7 @@ with open("profiling_result.csv", 'w') as out:
 with open("profiling_result_neat.csv", 'w') as out:
     out.write(report_table_neat)
 
+
 '''
 from tvm.contrib import graph_executor
 #run general inference and get output
