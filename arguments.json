@@ -1,0 +1,20 @@
+{
+	"input_shape": [
+		3,
+		224,
+		224
+	],
+	"output_shape": [
+		1,
+		1000
+	],
+	"batch_size": 1,
+	"model_path": "/Users/kimdonghyub/tvm-workspace/tvm_model_extractor/onnx_models/resnet101-v1-7.onnx",
+	"optimization_level": 0,
+	"local": true,
+	"local_host": "llvm",
+	"target_host": "llvm -mtriple=aarch64-conda-linux-gnu",
+	"target_gpu": "opencl -device=mali",
+	"rpc_ip_address": "192.168.1.189",
+	"rpc_port": 9090
+}
