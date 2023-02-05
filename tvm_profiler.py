@@ -102,16 +102,16 @@ device_input_data = tvm.nd.array(data, dev)
 
 
 ## profiler run1
-profiler = debug_executor.create(lib.get_graph_json(), remote_lib, dev,dump_root="./tvm_profiled_json/r")
+profiler = debug_executor.create(lib.get_graph_json(), remote_lib, dev)
 report = profiler.profile(data=device_input_data)
 report_table_neat = report.table(sort=True, aggregate=True, col_sums=True)
 report_table_full = report.csv()
 print(report)
 
 # writing to csv file 
-with open("profiling_result.csv", 'w') as out:
+with open("./profiling_result/result_full.csv", 'w') as out:
     out.write(report_table_full)
-with open("profiling_result_neat.csv", 'w') as out:
+with open("./profiling_result/result_neat.csv", 'w') as out:
     out.write(report_table_neat)
 
 
