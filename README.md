@@ -9,7 +9,7 @@ rpc command
 python -m tvm.exec.rpc_server --host 0.0.0.0 --port=9090
 
 
-if following statement, rpc started succesfully.
+if following statement, rpc started successfully.
 
 INFO:root:RPCServer: bind to 0.0.0.0:9090
 
