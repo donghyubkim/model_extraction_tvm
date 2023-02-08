@@ -140,6 +140,6 @@ class tvm_profiler():
         #print("run sucessfully")
 
 if __name__ == "__main__":
-    t = tvm_profiler()
+    t = tvm_profiler
     lib,remote_lib,dev,device_input_data = t.compile()
     t.run(lib,remote_lib,dev,device_input_data)

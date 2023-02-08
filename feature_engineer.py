@@ -61,9 +61,9 @@ def feature_engineering():
         layer_dict['total_count'] += data[0] 
     
     
-    for key in layer_dict_keys:
-        print(key)
-        print(round(layer_dict[key],3))
+    #for key in layer_dict_keys:
+        #print(key)
+        #print(round(layer_dict[key],3))
     return layer_dict
 
 if __name__ == "__main__":
