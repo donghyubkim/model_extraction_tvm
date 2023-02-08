@@ -17,6 +17,7 @@ def make_json(model,input_shape):
     file_data["target_gpu"] = "opencl -device=mali"
     file_data["rpc_ip_address"] = "192.168.1.189"
     file_data["rpc_port"] = 9090
+    
 
 
 
@@ -24,5 +25,7 @@ def make_json(model,input_shape):
 
     with open("arguments.json","w",encoding="utf-8") as make_file:
         json.dump(file_data, make_file, ensure_ascii=False, indent="\t")
+    
+    
 
 

@@ -1,20 +1,24 @@
 from functions import model_selector
 from make_json import make_json
-from tvm_profiler import tvm_profiler, profiler_run
+import tvm_profiler 
 from feature_engineer import feature_engineering
 import csv
 
 onnx_model_list = model_selector()
+profiler = tvm_profiler.tvm_profiler
+run_iter = 5
+input_shape = (3,224,224)
 
 for model in onnx_model_list:
-
-    input_shape = (3,224,224)
+    
+    
     make_json(model,input_shape=input_shape)
-    lib,remote_lib,dev,device_input_data = tvm_profiler()
+    lib,remote_lib,dev,device_input_data = profiler.compile()
     
     run_count = 1
-    for _ in range(5): # run 5 times 
-        profiler_run(lib,remote_lib,dev,device_input_data)
+    for _ in range(run_iter): # run 5 times 
+        
+        profiler.run(lib,remote_lib,dev,device_input_data)
         print("run {}".format(run_count))
         run_count+=1
         layer_information_dict = feature_engineering()
