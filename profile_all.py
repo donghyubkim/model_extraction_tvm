@@ -32,7 +32,7 @@ for model in onnx_model_list:
         run_count+=1
 
 
-csv_merger() # default arg: fillna = True 
+csv_merger() # default arg: fillna0 = True 
 # by filling NaN with 0, we can make unique layer as a feature.
 
 
