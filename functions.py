@@ -13,7 +13,7 @@ def model_selector():
 
     return onnx_model_list
 
-def csv_merger(): #it merges several model files into 1 csv file that can be trained in ML model.
+def csv_merger(fillna0 = True): #it merges several model files into 1 csv file that can be trained in ML model.
     path = "./aggregated_results"
     csv_to_be_merged_list = os.listdir(path)
     
@@ -26,24 +26,20 @@ def csv_merger(): #it merges several model files into 1 csv file that can be tra
         csv_file_path_list.append(csv_file_path)
     
     
-    csv_base=pd.read_csv(csv_file_path_list[0] )
+    csv_base=pd.read_csv(csv_file_path_list[0])
 
     for path in csv_file_path_list[1:] : 
         csv_other = pd.read_csv(path)
         csv_base = pd.merge(csv_base, csv_other, how='outer')
     
-    
+
+    csv_base.fillna(0,inplace=fillna0)
+
     csv_base.to_csv('final_result.csv', encoding='utf-8')
 
 
 
-    '''
-    data1 = pd.read_csv('datasets/loan.csv')
-    data2 = pd.read_csv('datasets/borrower.csv')
-    output4 = pd.merge(data1, data2, 
-                        on='LOAN_NO', 
-                        how='outer')
-    '''
+    
 def aggregated_result_writer(model,layer_information_dict,run_count,truncate_length):
     with open('./aggregated_results/result_{}.csv'.format(model[:truncate_length]), 'a') as csvfile: #truncate .onnx in the csv filename
             writer = csv.DictWriter(csvfile, fieldnames=layer_information_dict.keys())

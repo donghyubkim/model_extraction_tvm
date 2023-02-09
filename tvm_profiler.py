@@ -8,9 +8,15 @@ from tvm.contrib.debugger import debug_executor
 
 import json
 
-class tvm_profiler():
+class tvm_profiler:
 
-    def compile():
+    def __init__(self) -> None:
+        self.lib = None
+        self.remote_lib = None
+        self.dev = None
+        self.device_input_data = None
+
+    def compile(self) -> None:
 
         with open ("arguments.json", "r") as f:
             args = json.load(f)
@@ -61,7 +67,7 @@ class tvm_profiler():
         with tvm.transform.PassContext(opt_level=args["optimization_level"]): # optimization level from 0 to 3
 
             #Helper function that builds a Relay function to module that runs on TVM graph executor.
-            lib = relay.build(mod, target=target,params=params) 
+            self.lib = relay.build(mod, target=target,params=params) 
             #returns factory_module – The runtime factory for the TVM graph executor.
 
             #from doc:
@@ -85,10 +91,10 @@ class tvm_profiler():
         print("loading generated lib to runtime ...")
         temp = utils.tempdir()
         path = temp.relpath("lib.tar")
-        lib.export_library(path)
+        self.lib.export_library(path)
         remote.upload(path)
 
-        remote_lib = remote.load_module("lib.tar")
+        self.remote_lib = remote.load_module("lib.tar")
         #tvm.runtime.Module encapsulates the result of compilation.
         #A runtime.Module contains a GetFunction method to obtain PackedFuncs by name.
         print("successfully loaded model library")
@@ -96,19 +102,19 @@ class tvm_profiler():
 
         #specify device
         if local == True:
-            dev = remote.cpu(0)
+            self.dev = remote.cpu(0)
         else:
-            dev = remote.opencl(0)
+            self.dev = remote.opencl(0)
 
 
         #make device specified input
-        device_input_data = tvm.nd.array(data, dev)
-        return lib,remote_lib,dev,device_input_data
+        self.device_input_data = tvm.nd.array(data, self.dev)
+        
 
-    def run(lib,remote_lib,dev,device_input_data):
+    def run(self) -> None:
         ## profiler run1
-        profiler = debug_executor.create(lib.get_graph_json(), remote_lib, dev)
-        report = profiler.profile(data=device_input_data)
+        profiler = debug_executor.create(self.lib.get_graph_json(), self.remote_lib, self.dev)
+        report = profiler.profile(data=self.device_input_data)
         report_table_neat = report.table(sort=True, aggregate=True, col_sums=True)
         report_table_full = report.csv()
 
@@ -140,6 +146,6 @@ class tvm_profiler():
         #print("run sucessfully")
 
 if __name__ == "__main__":
-    t = tvm_profiler
-    lib,remote_lib,dev,device_input_data = t.compile()
-    t.run(lib,remote_lib,dev,device_input_data)
+    t = tvm_profiler()
+    t.compile()
+    t.run()

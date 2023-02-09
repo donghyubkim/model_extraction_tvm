@@ -1,11 +1,11 @@
 from functions import model_selector, aggregated_result_writer, csv_merger
 from make_json import make_json
 from feature_engineer import feature_engineering
-import tvm_profiler 
+import tvm_profiler
 
 
 onnx_model_list = model_selector()
-profiler = tvm_profiler.tvm_profiler
+profiler = tvm_profiler.tvm_profiler()
 run_iter = 5
 input_shape = (3,224,224)
 
@@ -14,14 +14,14 @@ for model in onnx_model_list:
     
     
     make_json(model,input_shape=input_shape)
-    lib,remote_lib,dev,device_input_data = profiler.compile()
+    profiler.compile()
     
     run_count = 1
     truncate_length = -(len(model.split('.')[-1]) +1) # to truncate .onnx from csv filename 
 
     for _ in range(run_iter): # run 5 times 
         
-        profiler.run(lib,remote_lib,dev,device_input_data)
+        profiler.run()
         print("run {}".format(run_count))
         
         layer_information_dict = feature_engineering()
@@ -32,6 +32,7 @@ for model in onnx_model_list:
         run_count+=1
 
 
-csv_merger()
+csv_merger() # default arg: fillna = True 
+# by filling NaN with 0, we can make unique layer as a feature.
 
 

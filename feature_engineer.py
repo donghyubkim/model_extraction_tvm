@@ -44,7 +44,7 @@ def feature_engineering():
     layer_dict['total_duration'] = 0 
     layer_dict['total_percentage'] = 0 
     layer_dict['total_count'] = 0 
-    layer_dict_keys = layer_dict.keys()
+    #layer_dict_keys = layer_dict.keys()
     for data in data_list:
         # str -> int or float
         data[2] = float(data[2].replace(",","")) #duration of a single layer
