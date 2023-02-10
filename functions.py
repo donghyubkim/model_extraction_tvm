@@ -7,17 +7,20 @@ def model_selector():
     path = "../onnx_models"
     onnx_model_list = os.listdir(path)
     print('list of onnx models be profiled')
+    target = ".onnx"
+    onnx_model_list = leave_target_only(onnx_model_list,target)
     print(onnx_model_list)
     
-    onnx_model_list.remove(".DS_Store")
 
     return onnx_model_list
 
 def csv_merger(filename, fillna0 = True, delete_aggregated_result_dir_files = True): #it merges several model files into 1 csv file that can be trained in ML model.
     path = "./aggregated_results"
     csv_to_be_merged_list = os.listdir(path)
+    target = ".csv"
     
-    csv_to_be_merged_list.remove(".DS_Store")
+    csv_to_be_merged_list = leave_target_only(csv_to_be_merged_list,target)
+    
 
     csv_file_path_list = list()
 
@@ -59,6 +62,10 @@ def aggregated_result_writer(model,layer_information_dict,run_count,truncate_dot
                 writer.writerow(layer_information_dict)
             else:
                 writer.writerow(layer_information_dict)
+
+def leave_target_only(directory,target):
+    new_directory = [related for related in directory if target in related]
+    return new_directory
 
 if __name__ == "__main__":
     #model_selector()
