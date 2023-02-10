@@ -13,7 +13,7 @@ def model_selector():
 
     return onnx_model_list
 
-def csv_merger(fillna0 = True): #it merges several model files into 1 csv file that can be trained in ML model.
+def csv_merger(filename, fillna0 = True, delete_aggregated_result_dir_files = True): #it merges several model files into 1 csv file that can be trained in ML model.
     path = "./aggregated_results"
     csv_to_be_merged_list = os.listdir(path)
     
@@ -35,13 +35,24 @@ def csv_merger(fillna0 = True): #it merges several model files into 1 csv file t
 
     csv_base.fillna(0,inplace=fillna0)
 
-    csv_base.to_csv('final_result.csv', encoding='utf-8')
-
-
+    csv_base.to_csv(filename, encoding='utf-8')
 
     
-def aggregated_result_writer(model,layer_information_dict,run_count,truncate_length):
-    with open('./aggregated_results/result_{}.csv'.format(model[:truncate_length]), 'a') as csvfile: #truncate .onnx in the csv filename
+    if delete_aggregated_result_dir_files:
+        import glob
+        files = glob.glob('./aggregated_results/**/*.csv', recursive=True)
+
+        for f in files:
+            try:
+                os.remove(f)
+            except OSError as e:
+                print("Error: %s : %s" % (f, e.strerror))
+    else:
+        pass
+
+
+def aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx):
+    with open('./aggregated_results/result_{}.csv'.format(model[:truncate_dotonnx]), 'a') as csvfile: #truncate .onnx in the csv filename
             writer = csv.DictWriter(csvfile, fieldnames=layer_information_dict.keys())
             if run_count == 1:
                 writer.writeheader()
@@ -51,4 +62,4 @@ def aggregated_result_writer(model,layer_information_dict,run_count,truncate_len
 
 if __name__ == "__main__":
     #model_selector()
-    csv_merger()
+    csv_merger(filename = "pred_model_trainable_result.csv")

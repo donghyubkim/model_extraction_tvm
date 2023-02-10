@@ -27,12 +27,12 @@ for model in onnx_model_list:
         layer_information_dict = feature_engineering()
         layer_information_dict['label_model_name'] = model 
 
-        aggregated_result_writer(model,layer_information_dict,run_count,truncate_length)
+        aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx=truncate_length)
 
         run_count+=1
 
 
-csv_merger() # default arg: fillna0 = True 
+csv_merger(filename = "pred_model_trainable_result.csv") # default arg: fillna0 = True 
 # by filling NaN with 0, we can make unique layer as a feature.
 
 
