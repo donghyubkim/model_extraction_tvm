@@ -17,7 +17,7 @@ def feature_engineering():
 
         if layer == []:
             continue
-        elif 'tvmgen' in layer[5]:
+        elif 'tvmgen' in layer[5]: 
             layer[5] = layer[5].split("_")[3:] #get rid of tvmgen_default_fused 
             if layer[5][-1].isnumeric(): #get rid of number if ends with number
                 layer[5].pop()
@@ -47,18 +47,20 @@ def feature_engineering():
     #layer_dict_keys = layer_dict.keys()
     for data in data_list:
         # str -> int or float
-        data[2] = float(data[2].replace(",","")) #duration of a single layer
-        data[5] = float(data[5]) #percentage of a single layer
-        data[0] = int(data[0]) #count of a single layer, which is 1 
+        layer_duration = float(data[2].replace(",","")) #duration of a single layer
+        layer_percentage = float(data[5]) #percentage of a single layer
+        layer_count = int(data[0]) #count of a single layer, which is 1 
         #adding
 
-        layer_dict['aggregated_duration_'+ data[4]] += data[2]
-        layer_dict['aggregated_percentage_'+ data[4]] += data[5]
-        layer_dict['aggregated_count_'+ data[4]] += data[0]
+        
+        layer_name = data[4]
+        layer_dict['aggregated_duration_'+ layer_name] += layer_duration
+        layer_dict['aggregated_percentage_'+ layer_name] += layer_percentage
+        layer_dict['aggregated_count_'+ layer_name] += layer_count
 
-        layer_dict['total_duration'] += data[2]
-        layer_dict['total_percentage'] += data[5] 
-        layer_dict['total_count'] += data[0] 
+        layer_dict['total_duration'] += layer_duration
+        layer_dict['total_percentage'] += layer_percentage 
+        layer_dict['total_count'] += layer_count
     
     
     #for key in layer_dict_keys:
