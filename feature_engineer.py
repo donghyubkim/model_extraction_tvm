@@ -1,7 +1,7 @@
 
 #import pandas as pd
 import csv
-
+from collections import defaultdict
 def feature_engineering():
     data_list = list()
     aggregated_layer_list = list()
@@ -35,16 +35,8 @@ def feature_engineering():
     #print(data_list)
 
     #dictionary init. otherwise keyerror
-    layer_dict = dict()
-    for layer in aggregated_layer_list: 
-        layer_dict["aggregated_duration_"+layer] = 0
-        layer_dict["aggregated_percentage_"+layer] = 0
-        layer_dict["aggregated_count_"+layer] = 0   
-
-    layer_dict['total_duration'] = 0 
-    layer_dict['total_percentage'] = 0 
-    layer_dict['total_count'] = 0 
-    #layer_dict_keys = layer_dict.keys()
+    layer_dict = defaultdict(float)
+    
     for data in data_list:
         # str -> int or float
         layer_duration = float(data[2].replace(",","")) #duration of a single layer
