@@ -11,7 +11,7 @@
 	"batch_size": 1,
 	"model_path": "/Users/kimdonghyub/tvm-workspace/onnx_models/vgg16-7.onnx",
 	"optimization_level": 0,
-	"local": true,
+	"local": false,
 	"local_host": "llvm",
 	"target_host": "llvm -mtriple=aarch64-conda-linux-gnu",
 	"target_gpu": "opencl -device=mali",

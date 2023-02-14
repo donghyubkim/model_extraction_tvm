@@ -4,7 +4,7 @@ def make_json(model,input_shape,int_mod = False):
     from collections import OrderedDict
 
     file_data = OrderedDict()
-
+    
     file_data["input_shape"] = input_shape
     
     file_data["output_shape"] = (1, 1000)
@@ -14,7 +14,7 @@ def make_json(model,input_shape,int_mod = False):
     else:
         file_data["model_path"] = "/Users/kimdonghyub/tvm-workspace/onnx_models/"+model
     file_data["optimization_level"] = 0
-    file_data["local"] = True
+    file_data["local"] = False
     file_data["local_host"] = "llvm"
     file_data["target_host"] = "llvm -mtriple=aarch64-conda-linux-gnu"
     file_data["target_gpu"] = "opencl -device=mali"

@@ -36,7 +36,13 @@ class tvm_profiler:
         onnx_model = onnx.load(model_path)
 
         #Convert a ONNX model into an equivalent Relay Function 
-        input_name = [onnx_model.graph.input[0]][0].name
+        
+        if 'densenet' in model_path or 'squeezenet' in model_path: #because of maybe some bug with onnx model itself. 
+            input_name = 'data_0'
+        else:
+            input_name = [onnx_model.graph.input[0]][0].name
+
+            
         #print([onnx_model.graph.input[0]][0])
         #print(input_name)
         #input_name = "input"
@@ -104,7 +110,7 @@ class tvm_profiler:
         if local == True:
             self.dev = remote.cpu(0)
         else:
-            self.dev = remote.opencl(0)
+            self.dev = remote.cl(0)
 
 
         #make device specified input
@@ -142,8 +148,7 @@ class tvm_profiler:
         top1 = np.argmax(out.numpy())
         print("TVM prediction top-1: {}".format(top1))
         '''
-        #program ran succesfully
-        #print("run sucessfully")
+        
 
 if __name__ == "__main__":
     t = tvm_profiler()

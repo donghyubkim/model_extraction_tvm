@@ -1,19 +1,19 @@
-from functions import model_selector, aggregated_result_writer, csv_merger
+from functions import model_selector, aggregated_result_writer, csv_merger_cleaner
 from make_json import make_json
 from feature_engineer import feature_engineering
 import tvm_profiler
 
 
 onnx_model_list = model_selector()
-profiler = tvm_profiler.tvm_profiler()
-run_iter = 20
+
+run_iter = 40
 input_shape = (3,224,224)
 int_mod = False #if you want to profile integer model make it True
 
 for model in onnx_model_list:
     
     
-    
+    profiler = tvm_profiler.tvm_profiler() #if out of this for loop (without initialization) we wait forever.
     make_json(model,input_shape=input_shape, int_mod=int_mod)
     profiler.compile()
     
@@ -33,7 +33,7 @@ for model in onnx_model_list:
         run_count+=1
 
 
-csv_merger(filename = "pred_model_trainable_data.csv") # default arg: fillna0 = True 
+csv_merger_cleaner(filename = "pred_model_trainable_data.csv",delete_aggregated_result_dir_files = False) # default arg: fillna0 = True 
 # by filling NaN with 0, we can make unique layer as a feature.
 
 
