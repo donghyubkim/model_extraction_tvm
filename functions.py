@@ -69,4 +69,4 @@ def leave_target_only(directory,target):
 
 if __name__ == "__main__":
     #model_selector()
-    csv_merger(filename = "pred_model_trainable_result.csv")
+    csv_merger(filename = "pred_model_trainable_data.csv")

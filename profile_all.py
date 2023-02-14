@@ -6,14 +6,15 @@ import tvm_profiler
 
 onnx_model_list = model_selector()
 profiler = tvm_profiler.tvm_profiler()
-run_iter = 5
+run_iter = 20
 input_shape = (3,224,224)
+int_mod = False #if you want to profile integer model make it True
 
 for model in onnx_model_list:
     
     
     
-    make_json(model,input_shape=input_shape)
+    make_json(model,input_shape=input_shape, int_mod=int_mod)
     profiler.compile()
     
     run_count = 1
@@ -32,7 +33,7 @@ for model in onnx_model_list:
         run_count+=1
 
 
-csv_merger(filename = "pred_model_trainable_result.csv") # default arg: fillna0 = True 
+csv_merger(filename = "pred_model_trainable_data.csv") # default arg: fillna0 = True 
 # by filling NaN with 0, we can make unique layer as a feature.
 
 

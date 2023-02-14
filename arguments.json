@@ -9,7 +9,7 @@
 		1000
 	],
 	"batch_size": 1,
-	"model_path": "/Users/kimdonghyub/tvm-workspace/onnx_models/mobilenetv2-10.onnx",
+	"model_path": "/Users/kimdonghyub/tvm-workspace/onnx_models/vgg16-7.onnx",
 	"optimization_level": 0,
 	"local": true,
 	"local_host": "llvm",
