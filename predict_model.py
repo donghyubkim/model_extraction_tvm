@@ -48,6 +48,7 @@ class predict():
         self.Y_test = Y_test.to_numpy()
         self.num_classes = len(Y.unique())
         #self.input_size = len(X.columns)
+        self.X_train_length=len(self.X_train)
 
         
         
@@ -99,8 +100,17 @@ class predict():
             acc_estimator_wise_li.append(acc)
         return acc_estimator_wise_li
     
-def plot_training_size_var(classifiers,train_size_arr,classifiers_label):
+
+def classifier_labeler(classifiers):
+    classifiers_label = list()
+    for c in classifiers:
+        classifiers_label.append(str(c))
+    print(classifiers_label)
+    return classifiers_label
     
+def plot_training_size_var(classifiers,train_size_arr):
+    classifiers_label=classifier_labeler(classifiers)
+
     acc_li = list()
     for train_size in train_size_arr:
         pred = predict(df,classifiers = classifiers,scaler = 'standard', train_size = train_size)    
@@ -109,16 +119,16 @@ def plot_training_size_var(classifiers,train_size_arr,classifiers_label):
         acc_li.append(acc)
 
     acc_np = np.array(acc_li).T
-    #acc_np = np.transpose(acc_np)
     for ac ,cl in zip(acc_np,classifiers_label):
-        plt.plot(train_size_arr,ac,label = cl)
+        num_of_train_data = train_size_arr*pred.X_train_length
+        plt.plot(num_of_train_data,ac,label = cl)
+
     plt.legend()
     plt.title("graph")
     plt.xlabel("train size")
     plt.ylabel("accuracy")
-
-        
     plt.show()
+
 
     
 
@@ -126,15 +136,18 @@ if __name__ == "__main__":
     df = pd.read_csv('./pred_model_trainable_data.csv')
     train_size = 0.33
     classifiers = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
-    classifiers_label= ['GaussianNB','LogisticRegression','RandomForestClassifier','MLPClassifier','NearestCentroid','KNeighborsClassifier','AdaBoostClassifier']
+    
     pred = predict(df,classifiers = classifiers,scaler = 'standard', train_size = train_size) # or you can use 'minmax' to use minmax normalization
     #print(pred.Y_test)
     
     pred.estimator_generation()
     pred.predict_all(profile = True)
     
-    train_size_arr = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6]
-    plot_training_size_var(classifiers,train_size_arr,classifiers_label)
+
+    # plot train_size vs accuracy graph
+
+    train_size_np_arr = np.arange(0.05,0.8,0.05)
+    plot_training_size_var(classifiers,train_size_np_arr)
 
     
 

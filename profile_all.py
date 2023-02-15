@@ -4,17 +4,19 @@ from feature_engineer import feature_engineering
 import tvm_profiler
 
 
-onnx_model_list = model_selector()
+
 
 run_iter = 40
 input_shape = (3,224,224)
-int_mod = False #if you want to profile integer model make it True
+int_mod = True #if you want to profile integer models make it True
+local = True
+onnx_model_list = model_selector(int_mod)
 
 for model in onnx_model_list:
     
     
     profiler = tvm_profiler.tvm_profiler() #if out of this for loop (without initialization) we wait forever.
-    make_json(model,input_shape=input_shape, int_mod=int_mod)
+    make_json(model,input_shape=input_shape,local=local,int_mod=int_mod)
     profiler.compile()
     
     run_count = 1
@@ -28,12 +30,15 @@ for model in onnx_model_list:
         layer_information_dict = feature_engineering()
         layer_information_dict['label_model_name'] = model 
 
-        aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx=truncate_length)
+        aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx=truncate_length,int_mod = int_mod)
 
         run_count+=1
 
-
-csv_merger_cleaner(filename = "pred_model_trainable_data.csv",delete_aggregated_result_dir_files = False) # default arg: fillna0 = True 
+if not int_mod: 
+    filename = "pred_model_trainable_data.csv"
+else:
+    filename = "pred_model_trainable_data_int8.csv"
+csv_merger_cleaner(filename = filename,delete_aggregated_result_dir_files = False) # default arg: fillna0 = True 
 # by filling NaN with 0, we can make unique layer as a feature.
 
 
