@@ -91,7 +91,7 @@ class predict():
         else:
             print('Accuracy is 100%')
 
-    def plot_graph_tsv(self):
+    def get_acc_to_plot_graph_ts_vs_acc(self):
         acc_estimator_wise_li = list()
         for estimator in self.estimators:
             self.predicted = estimator.predict(self.X_test)
@@ -105,13 +105,11 @@ def plot_training_size_var(classifiers,train_size_arr,classifiers_label):
     for train_size in train_size_arr:
         pred = predict(df,classifiers = classifiers,scaler = 'standard', train_size = train_size)    
         pred.estimator_generation()
-        acc = pred.plot_graph_tsv()
-        print(acc)
+        acc = pred.get_acc_to_plot_graph_ts_vs_acc()
         acc_li.append(acc)
-    acc_np = np.array(acc_li)
-    print(acc_np)
-    acc_np = np.transpose(acc_np)
-    print(acc_np)
+
+    acc_np = np.array(acc_li).T
+    #acc_np = np.transpose(acc_np)
     for ac ,cl in zip(acc_np,classifiers_label):
         plt.plot(train_size_arr,ac,label = cl)
     plt.legend()
@@ -128,12 +126,13 @@ if __name__ == "__main__":
     df = pd.read_csv('./pred_model_trainable_data.csv')
     train_size = 0.33
     classifiers = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
+    classifiers_label= ['GaussianNB','LogisticRegression','RandomForestClassifier','MLPClassifier','NearestCentroid','KNeighborsClassifier','AdaBoostClassifier']
     pred = predict(df,classifiers = classifiers,scaler = 'standard', train_size = train_size) # or you can use 'minmax' to use minmax normalization
     #print(pred.Y_test)
     
     pred.estimator_generation()
     pred.predict_all(profile = True)
-    classifiers_label= ['GaussianNB','LogisticRegression','RandomForestClassifier','MLPClassifier','NearestCentroid','KNeighborsClassifier','AdaBoostClassifier']
+    
     train_size_arr = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6]
     plot_training_size_var(classifiers,train_size_arr,classifiers_label)
 
