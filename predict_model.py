@@ -25,7 +25,9 @@ class predict():
         
         
         Y = df['label_model_name']
-        X = df.drop(['label_model_name','Unnamed: 0'], axis = 'columns')
+        
+        #X = df.drop(['label_model_name','Unnamed: 0'], axis = 'columns')
+        X = df.drop(['label_model_name'], axis = 'columns')
         
         if scaler:
             if scaler == 'minmax':
@@ -146,7 +148,7 @@ if __name__ == "__main__":
 
     # plot train_size vs accuracy graph
 
-    train_size_np_arr = np.arange(0.05,0.8,0.05)
+    train_size_np_arr = np.arange(0.1,0.8,0.05)
     plot_training_size_var(classifiers,train_size_np_arr)
 
     

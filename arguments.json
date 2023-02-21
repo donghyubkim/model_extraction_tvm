@@ -4,15 +4,15 @@
 		224,
 		224
 	],
-	"int_mod": true,
+	"int_mod": false,
 	"output_shape": [
 		1,
 		1000
 	],
 	"batch_size": 1,
-	"model_path": "/Users/kimdonghyub/tvm-workspace/onnx_models_int/vgg16-12-int8.onnx",
+	"model_path": "/Volumes/PATRIOT/onnx_models/vgg16_bn.onnx",
 	"optimization_level": 0,
-	"local": true,
+	"local": false,
 	"local_host": "llvm",
 	"target_host": "llvm -mtriple=aarch64-conda-linux-gnu",
 	"target_gpu": "opencl -device=mali",

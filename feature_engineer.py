@@ -16,7 +16,7 @@ def feature_engineering():
         layer = [data for data in layer if data not in remove_set] 
         #print(layer)  
 
-        if layer == []:
+        if not layer :
             continue
         elif 'tvmgen' in layer[5]: 
             layer[5] = layer[5].split("_")[3:] #get rid of tvmgen_default_fused 
@@ -45,7 +45,6 @@ def feature_engineering():
         layer_count = int(data[0]) #count of a single layer, which is 1 
         #adding
 
-        
         layer_name = data[4]
         layer_dict['aggregated_duration_'+ layer_name] += layer_duration
         layer_dict['aggregated_percentage_'+ layer_name] += layer_percentage
@@ -56,9 +55,7 @@ def feature_engineering():
         layer_dict['total_count'] += layer_count
     
     
-    #for key in layer_dict_keys:
-        #print(key)
-        #print(round(layer_dict[key],3))
+    
     return layer_dict
 
 if __name__ == "__main__":

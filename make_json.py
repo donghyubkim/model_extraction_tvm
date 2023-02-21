@@ -1,4 +1,4 @@
-def make_json(model,input_shape,local,int_mod = False):
+def make_json(model,path,input_shape,local,int_mod = False):
 
     import json
     from collections import OrderedDict
@@ -9,10 +9,8 @@ def make_json(model,input_shape,local,int_mod = False):
     file_data['int_mod'] = int_mod
     file_data["output_shape"] = (1, 1000)
     file_data["batch_size"] = 1
-    if int_mod:
-        file_data["model_path"] = "/Users/kimdonghyub/tvm-workspace/onnx_models_int/"+model
-    else:
-        file_data["model_path"] = "/Users/kimdonghyub/tvm-workspace/onnx_models/"+model
+    
+    file_data["model_path"] = path+'/'+model
     file_data["optimization_level"] = 0
     file_data["local"] = local
     file_data["local_host"] = "llvm"

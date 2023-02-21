@@ -2,12 +2,9 @@ import os
 import pandas as pd
 import csv
 
-def model_selector(int_mod):
+def model_selector(path):
     #/directory/of/models
-    if not int_mod:
-        path = "../onnx_models"
-    else:
-        path = "../onnx_models_int"
+    
     onnx_model_list = os.listdir(path)
     print('list of onnx models be profiled')
     target = ".onnx"
@@ -33,15 +30,17 @@ def csv_merger_cleaner(filename, fillna0 = True, delete_aggregated_result_dir_fi
     
     
     csv_base=pd.read_csv(csv_file_path_list[0])
-
-    for path in csv_file_path_list[1:] : 
+    csv_base = csv_base.iloc[2::2, :]
+    
+    for path in csv_file_path_list[1:]: 
         csv_other = pd.read_csv(path)
+        csv_other = csv_other.iloc[2::2, :]
         csv_base = pd.merge(csv_base, csv_other, how='outer')
     
 
     csv_base.fillna(0,inplace=fillna0)
 
-    csv_base.to_csv(filename, encoding='utf-8')
+    csv_base.to_csv(filename, encoding='utf-8',index = False)
 
     
     if delete_aggregated_result_dir_files:
@@ -60,28 +59,37 @@ def csv_merger_cleaner(filename, fillna0 = True, delete_aggregated_result_dir_fi
         pass
 
 
-def aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx,int_mod):
-    if not int_mod:
-        with open('./aggregated_results/result_{}.csv'.format(model[:truncate_dotonnx]), 'a') as csvfile: #truncate .onnx in the csv filename
-                writer = csv.DictWriter(csvfile, fieldnames=layer_information_dict.keys())
-                if run_count == 1:
-                    writer.writeheader()
-                    writer.writerow(layer_information_dict)
-                else:
-                    writer.writerow(layer_information_dict)
-    else:
-        with open('./aggregated_results_int8/result_{}.csv'.format(model[:truncate_dotonnx]), 'a') as csvfile: #truncate .onnx in the csv filename
-                writer = csv.DictWriter(csvfile, fieldnames=layer_information_dict.keys())
-                if run_count == 1:
-                    writer.writeheader()
-                    writer.writerow(layer_information_dict)
-                else:
-                    writer.writerow(layer_information_dict)
+def aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx):
+    
+    folder_name = './aggregated_results/result_{}.csv'.format(model[:truncate_dotonnx])
+
+    with open(folder_name, 'a') as csvfile: #truncate .onnx in the csv filename
+            writer = csv.DictWriter(csvfile, fieldnames=layer_information_dict.keys())
+            if run_count == 1:
+                writer.writeheader()
+                writer.writerow(layer_information_dict)
+            else:
+                writer.writerow(layer_information_dict)
+    
         
 
 def leave_target_only(directory,target):
     new_directory = [related for related in directory if target in related]
     return new_directory
+
+def remove_half(filename): #because of some unknown error that showing 0 s and nan % in the final aggregated result 
+    # read the original csv file
+    df = pd.read_csv(filename)
+    # remove odd rows
+    df = df.iloc[::2, :]
+    # save the new csv file
+    df.to_csv(filename+'_half_removed', index=False)
+    
+
+
+
+
+
 
 if __name__ == "__main__":
     #model_selector()

@@ -25,7 +25,7 @@ class tvm_profiler:
         image_shape = args["input_shape"]
         data_shape = [args["batch_size"],] + image_shape
         #output_shape = args["output_shape"]
-        data = np.random.uniform(-1, 1, size=data_shape).astype("float32")
+        data = np.random.uniform(-1, 1, size=data_shape).astype("float64")
 
 
 
@@ -37,10 +37,10 @@ class tvm_profiler:
 
         #Convert a ONNX model into an equivalent Relay Function 
         
-        if 'densenet' in model_path or 'squeezenet' in model_path: #because of maybe some bug with onnx model itself. 
-            input_name = 'data_0'
-        else:
-            input_name = [onnx_model.graph.input[0]][0].name
+        #if 'densenet' in model_path or 'squeezenet' in model_path: #because of maybe some bug with onnx model itself. 
+        #    input_name = 'data_0'
+        #else:
+        input_name = [onnx_model.graph.input[0]][0].name
 
             
         #print([onnx_model.graph.input[0]][0])
@@ -116,20 +116,20 @@ class tvm_profiler:
         #make device specified input
         self.device_input_data = tvm.nd.array(data, self.dev)
         
+        self.profiler = debug_executor.create(self.lib.get_graph_json(), self.remote_lib, self.dev)
+        
 
     def run(self) -> None:
         ## profiler run1
-        profiler = debug_executor.create(self.lib.get_graph_json(), self.remote_lib, self.dev)
-        report = profiler.profile(data=self.device_input_data)
-        report_table_neat = report.table(sort=True, aggregate=True, col_sums=True)
+        
+        report = self.profiler.profile(data=self.device_input_data)
         report_table_full = report.csv()
-
 
         # writing to csv file 
         with open("./profiling_result/result_full.csv", 'w') as out:
             out.write(report_table_full) #we are using this one to aggregate
-        with open("./profiling_result/result_neat.csv", 'w') as out:
-            out.write(report_table_neat) #this one, tried, but doesn't work for some models (ex googlenet)
+        #with open("./profiling_result/result_neat.csv", 'w') as out:
+            #out.write(report_table_neat) #this one, tried, but doesn't work for some models (ex googlenet)
 
 
 
