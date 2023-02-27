@@ -22,8 +22,6 @@ class predict():
         
         self.data = df
         
-        
-        
         Y = df['label_model_name']
         
         #X = df.drop(['label_model_name','Unnamed: 0'], axis = 'columns')

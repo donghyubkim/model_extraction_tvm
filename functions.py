@@ -13,6 +13,33 @@ def model_selector(path):
     
 
     return onnx_model_list
+def remove_white_space(filename):
+    with open(filename, "r") as file:
+        lines = file.readlines()
+        lines = [line.replace(" ", "").replace("\t", "") for line in lines]
+
+# save file with same filename
+    with open(filename, "w") as file:
+        file.writelines(lines)
+
+def remove_white_space_all():
+    path = "./aggregated_results"
+    csv_to_be_merged_list = os.listdir(path)
+    target = ".csv"
+    
+    csv_to_be_merged_list = leave_target_only(csv_to_be_merged_list,target)
+    
+
+    csv_file_path_list = list()
+
+    for csv_file in csv_to_be_merged_list:
+        csv_file_path = './aggregated_results/'+csv_file
+        csv_file_path_list.append(csv_file_path)
+    
+    
+    for path in csv_file_path_list:
+        remove_white_space(path)
+   
 
 def csv_merger_cleaner(filename, fillna0 = True, delete_aggregated_result_dir_files = True): #it merges several model files into 1 csv file that can be trained in ML model.
     path = "./aggregated_results"
@@ -28,13 +55,18 @@ def csv_merger_cleaner(filename, fillna0 = True, delete_aggregated_result_dir_fi
         csv_file_path = './aggregated_results/'+csv_file
         csv_file_path_list.append(csv_file_path)
     
+    print(csv_file_path_list)
+    csv_base=pd.read_csv(csv_file_path_list[0]).astype('float64',errors = 'ignore')
     
-    csv_base=pd.read_csv(csv_file_path_list[0])
-    csv_base = csv_base.iloc[2::2, :]
     
+    csv_base = csv_base.iloc[::2, :]
+    print(csv_base)
     for path in csv_file_path_list[1:]: 
-        csv_other = pd.read_csv(path)
-        csv_other = csv_other.iloc[2::2, :]
+        csv_other = pd.read_csv(path).astype('float64',errors = 'ignore')
+        
+        
+        csv_other = csv_other.iloc[0::2, :]
+        print(csv_other)
         csv_base = pd.merge(csv_base, csv_other, how='outer')
     
 
@@ -93,4 +125,5 @@ def remove_half(filename): #because of some unknown error that showing 0 s and n
 
 if __name__ == "__main__":
     #model_selector()
+    #remove_white_space_all()
     csv_merger_cleaner(filename = "pred_model_trainable_data.csv",delete_aggregated_result_dir_files = False)
