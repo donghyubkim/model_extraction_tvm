@@ -1,6 +1,6 @@
-from functions import model_selector, aggregated_result_writer, csv_merger_cleaner,remove_half
+from functions import model_selector, aggregated_result_writer, csv_merger_cleaner,remove_half,aggregate_data
 from make_json import make_json
-from feature_engineer import feature_engineering
+
 import tvm_profiler
 
 run_iter = 20
@@ -33,7 +33,7 @@ for index,model in enumerate(onnx_model_list):
             profiler.run()
             print("run {}".format(run_count))
 
-            layer_information_dict = feature_engineering()
+            layer_information_dict = aggregate_data()
             layer_information_dict['label_model_name'] = model 
 
             aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx=truncate_length)
