@@ -15,6 +15,7 @@ from sklearn.feature_selection import mutual_info_classif
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 class predictBase():
     def __init__(self, df, normalization = 'standard') -> None:
@@ -52,11 +53,19 @@ class predictBase():
         
     def select_k_best(self,k,score_func):
         selector = SelectKBest(score_func = score_func, k=k)
+        print(self.X)
         self.X = selector.fit_transform(self.X, self.Y)
-        cols_idxs =selector.get_support(indices=True)
-        features = self.X_primary
-        print(features.iloc[0,cols_idxs])
+        print(self.X)
+        filter =selector.get_support(indices=True)
         
+        features = self.X_primary
+        
+        print(str(score_func))
+        print(features.iloc[0,filter])
+
+        features = np.array(self.X_primary)
+        print(str(score_func))
+        print(features[filter])
         return self.X
         
 
@@ -68,14 +77,16 @@ class predictBase():
 
     def estimatorGeneration_RFE(self,feature_to_select):
         
-        self.estimator = RFE(estimator=self.classifier, n_features_to_select=feature_to_select, importance_getter=self.importances)
-        self.estimator.fit(self.X_train, self.Y_train)
-        #print(self.estimator.support_)
-        #print(self.estimator.ranking_)
+        classifier = RandomForestClassifier()
+        estimator = RFE(estimator=classifier, n_features_to_select=feature_to_select)
+        estimator.fit(self.X_train, self.Y_train)
+        #print(estimator.support_)
+        print('###importance ranking###')
+        print(estimator.ranking_)
+        print('###RFE filtered features###')
+        print(self.X_primary.loc[0,estimator.support_])
 
-        print(self.X_primary.loc[0,self.estimator.support_])
-
-        
+        return estimator.support_, estimator.ranking_
 
 
     def predict(self):
@@ -124,6 +135,11 @@ class predictBase():
         classifier_set = {NB,LR,RF,MLP,NC,KNN,ADB}
 
         return classifier_set
+    
+    def correlation(self):
+        table = self.data
+        df = table.pivot('aggregated_duration_nnconv2d', 'aggregated_percentage_nnconv2d', 'labe_model_name')
+        sns.heatmap(table)
 
 
 
@@ -131,34 +147,26 @@ class gaussianNB(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
         self.classifier = GaussianNB()
-
 class logisticRegression(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
-        self.classifier = LogisticRegression()
-    
-    
+        self.classifier = LogisticRegression()   
 class randomForest(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
-        self.classifier = RandomForestClassifier()
-    
-    
+        self.classifier = RandomForestClassifier()   
 class multiLayeredPerceptron(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
-        self.classifier = MLPClassifier()
-    
+        self.classifier = MLPClassifier()   
 class nearestCentroid(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
         self.classifier = NearestCentroid()
-
 class kNearestNeighbors(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
         self.classifier = KNeighborsClassifier()
-
 class adaboost(predictBase):
     def __init__(self,df, normalization = 'standard'):
         super().__init__(df, normalization = normalization)
@@ -168,16 +176,21 @@ class adaboost(predictBase):
 
 if __name__ == "__main__":
     
-   
+    
     df = pd.read_csv('./pred_model_trainable_data.csv')
     train_size = 0.3
+    '''
     p=predictBase(df,normalization='minmax')
     classifier_set = p.makeClassifierInstance(df=df)
     score_func_li = [chi2,mutual_info_classif]
 
     for score_func in score_func_li:
-        p.select_k_best(10,score_func=score_func)
+        p.select_k_best(2,score_func=score_func)
+    '''
 
+    p = predictBase(df)
+    p.splitTrainTest(train_size)
+    p.estimatorGeneration_RFE(6)
     '''
     for classifier in classifier_set:
         classifier.splitTrainTest(train_size = train_size)
@@ -185,14 +198,17 @@ if __name__ == "__main__":
         classifier.estimatorGeneration_RFE(3)
         classifier.predict()
         classifier.wronglyPredicted()
-   '''
-    
+    '''
+    '''
     trainSizeArray = np.arange(0.1,0.8,0.05)
-    
+    columns = ['aggregated_duration_nnconv2d','aggregated_percentage_nnconv2d','aggregated_count_nnconv2d','total_duration','total_percentage','total_count','aggregated_duration_nnbiasadd','aggregated_percentage_nnbiasadd','aggregated_count_nnbiasadd','aggregated_duration_nnrelu','aggregated_percentage_nnrelu','aggregated_count_nnrelu','aggregated_duration_nnmaxpool2d','aggregated_percentage_nnmaxpool2d','aggregated_count_nnmaxpool2d','aggregated_duration_concatenate','aggregated_percentage_concatenate','aggregated_count_concatenate','aggregated_duration_nnglobalavgpool2d','aggregated_percentage_nnglobalavgpool2d','aggregated_count_nnglobalavgpool2d','aggregated_duration_nnavgpool2d','aggregated_percentage_nnavgpool2d','aggregated_count_nnavgpool2d','aggregated_duration_nndense','aggregated_percentage_nndense','aggregated_count_nndense','aggregated_duration_add','aggregated_percentage_add','aggregated_count_add','aggregated_duration_mean','aggregated_percentage_mean','aggregated_count_mean','aggregated_duration_transpose','aggregated_percentage_transpose','aggregated_count_transpose','aggregated_duration_stridedslice','aggregated_percentage_stridedslice','aggregated_count_stridedslice','aggregated_duration_clip','aggregated_percentage_clip','aggregated_count_clip','aggregated_duration_multiply','aggregated_percentage_multiply','aggregated_count_multiply','aggregated_duration_rsqrt','aggregated_percentage_rsqrt','aggregated_count_rsqrt','aggregated_duration_negative','aggregated_percentage_negative','aggregated_count_negative','aggregated_duration_nnpad','aggregated_percentage_nnpad','aggregated_count_nnpad','aggregated_duration_nnlrn','aggregated_percentage_nnlrn','aggregated_count_nnlrn','aggregated_duration_nnsoftmax','aggregated_percentage_nnsoftmax','aggregated_count_nnsoftmax']
+    df = pd.read_csv('./pred_model_trainable_data.csv')
+    train_size = 0.3
+    p=predictBase(df,normalization='minmax')
+    p.correlation(columns)
+    '''
 
 
-
-    
     #AB = adaboost(df,train_size = train_size)
     #AB.wronglyPredictedLog()
     #NB.predict()

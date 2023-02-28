@@ -1,4 +1,4 @@
-from functions import model_selector, aggregated_result_writer, csv_merger_cleaner,remove_half,aggregate_data
+from data_handling import model_selector, aggregated_result_writer, csv_merger_cleaner,remove_half,aggregate_data
 from make_json import make_json
 
 import tvm_profiler

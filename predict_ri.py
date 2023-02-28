@@ -25,8 +25,13 @@ class predict():
         Y = df['label_model_name']
         
         #X = df.drop(['label_model_name','Unnamed: 0'], axis = 'columns')
-        X = df.drop(['label_model_name'], axis = 'columns')
+        #X = df.drop(['label_model_name'], axis = 'columns')
         
+        #best3
+        #X=df[['total_duration','aggregated_duration_nnbiasadd','aggregated_percentage_nndense']]
+        #looks fine but not important features
+        X=df[['aggregated_count_nnconv2d','aggregated_count_nnrelu','aggregated_duration_nnmaxpool2d']]
+        print(X)
         if scaler:
             if scaler == 'minmax':
                 scaler = MinMaxScaler()
@@ -123,8 +128,8 @@ def plot_training_size_var(classifiers,train_size_arr):
         num_of_train_data = train_size_arr*pred.X_train_length
         plt.plot(num_of_train_data,ac,label = cl)
 
-    plt.legend()
-    plt.title("graph")
+    plt.legend(loc = 'lower right', fontsize = 7.5)
+    plt.title("less important 3 features")
     plt.xlabel("train size")
     plt.ylabel("accuracy")
     plt.show()
