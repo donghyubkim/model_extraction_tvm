@@ -30,7 +30,7 @@ class predict():
         #best3
         #X=df[['total_duration','aggregated_duration_nnbiasadd','aggregated_percentage_nndense']]
         #looks fine but not important features
-        X=df[['aggregated_count_nnconv2d','aggregated_count_nnrelu','aggregated_duration_nnmaxpool2d']]
+        X=df[['aggregated_count_nnconv2d','aggregated_count_nnrelu','aggregated_duration_nndense']]
         print(X)
         if scaler:
             if scaler == 'minmax':

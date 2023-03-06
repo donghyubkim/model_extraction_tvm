@@ -8,6 +8,7 @@ input_shape = (3,224,224)
 local = False
 remove_half = True
 path = "/Volumes/PATRIOT/onnx_models"
+opt_level = 1
 #path = "../onnx_models_int"
 #path = "../onnx_models"
 
@@ -18,11 +19,11 @@ if remove_half:
 onnx_model_list = model_selector(path)
 onnx_cannot_compile_list = list()
 for index,model in enumerate(onnx_model_list):
-    print('progress: {}%'.format(((index+1)/len(onnx_model_list))*100)) # >> progress: 65.xx%
+    print('progress: {}%'.format(round(((index+1)/len(onnx_model_list))*100),2)) # >> progress: 65.xx%
 
     try:
         profiler = tvm_profiler.tvm_profiler() #if out of this for loop (without initialization) we wait forever.
-        make_json(model = model,path = path,input_shape=input_shape,local=local)
+        make_json(model = model,path = path,input_shape=input_shape,local=local,opt_level=opt_level)
         profiler.compile()
         run_count = 1
         truncate_length = -(len(model.split('.')[-1]) +1) # to truncate .onnx from csv filename 

@@ -1,4 +1,4 @@
-def make_json(model,path,input_shape,local,int_mod = False):
+def make_json(model,path,input_shape,local,opt_level):
 
     import json
     from collections import OrderedDict
@@ -6,12 +6,11 @@ def make_json(model,path,input_shape,local,int_mod = False):
     file_data = OrderedDict()
     
     file_data["input_shape"] = input_shape
-    file_data['int_mod'] = int_mod
     file_data["output_shape"] = (1, 1000)
     file_data["batch_size"] = 1
     
     file_data["model_path"] = path+'/'+model
-    file_data["optimization_level"] = 0
+    file_data["optimization_level"] = opt_level
     file_data["local"] = local
     file_data["local_host"] = "llvm"
     file_data["target_host"] = "llvm -mtriple=aarch64-conda-linux-gnu"

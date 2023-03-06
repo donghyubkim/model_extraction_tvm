@@ -81,10 +81,44 @@ class predictBase():
         estimator = RFE(estimator=classifier, n_features_to_select=feature_to_select)
         estimator.fit(self.X_train, self.Y_train)
         #print(estimator.support_)
+        
+        #print('###RFE filtered features###')
+        #print(self.X_primary.loc[0,estimator.support_])
+
+        featureRankingDic = dict()
+
+        for rank, feature in zip(estimator.ranking_,list(self.X_primary.columns)):
+            featureRankingDic[feature] = rank
         print('###importance ranking###')
-        print(estimator.ranking_)
-        print('###RFE filtered features###')
-        print(self.X_primary.loc[0,estimator.support_])
+        sorted_FRD = sorted(featureRankingDic.items(), key=lambda x: x[1])
+        #print(sorted_FRD)
+        for key,val in sorted_FRD:
+            print(key + ":",val)
+        
+
+        
+        Y = list(featureRankingDic.values())
+        X = np.arange(len(Y))
+        X_label = list(featureRankingDic.keys()) 
+        plt.plot(X, Y,'go')
+        plt.xticks(X,X_label,rotation = 90 , fontsize = 7)
+
+        # Set the x-label
+        plt.xlabel('feature')
+
+        # Set the y-label
+        plt.ylabel('ranking')
+
+        # Set the plot title
+        plt.title('feature importance ranking')
+
+        # Display the plot
+        plt.tight_layout()
+        plt.show()
+        plt.savefig('log/feature_ranking.pdf')
+
+
+
 
         return estimator.support_, estimator.ranking_
 
@@ -190,7 +224,7 @@ if __name__ == "__main__":
 
     p = predictBase(df)
     p.splitTrainTest(train_size)
-    p.estimatorGeneration_RFE(6)
+    p.estimatorGeneration_RFE(1)
     '''
     for classifier in classifier_set:
         classifier.splitTrainTest(train_size = train_size)
