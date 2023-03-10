@@ -53,6 +53,5 @@ filename = "pred_model_trainable_data.csv"
 csv_merger_cleaner(filename = filename,delete_aggregated_result_dir_files = False) # default arg: fillna0 = True 
 # by filling NaN with 0, we can make unique layer as a feature.
 
-if remove_half:
-    remove_half(filename = filename)
+
 

@@ -9,9 +9,8 @@ from sklearn.ensemble import RandomForestClassifier,  AdaBoostClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.feature_selection import RFE
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
-from sklearn.feature_selection import mutual_info_classif
+from sklearn.model_selection import learning_curve
+from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler,MinMaxScaler
 import matplotlib.pyplot as plt
 import numpy as np
@@ -51,23 +50,7 @@ class predictBase():
         #self.input_size = len(X.columns)
         self.X_train_length=len(self.X_train)
         
-    def select_k_best(self,k,score_func):
-        selector = SelectKBest(score_func = score_func, k=k)
-        print(self.X)
-        self.X = selector.fit_transform(self.X, self.Y)
-        print(self.X)
-        filter =selector.get_support(indices=True)
-        
-        features = self.X_primary
-        
-        print(str(score_func))
-        print(features.iloc[0,filter])
 
-        features = np.array(self.X_primary)
-        print(str(score_func))
-        print(features[filter])
-        return self.X
-        
 
 
     def estimatorGeneration(self): 
@@ -75,7 +58,7 @@ class predictBase():
         self.estimator = self.classifier.fit(self.X_train, self.Y_train)
         self.importances = self.estimator.feature_importances_
 
-    def estimatorGeneration_RFE(self,feature_to_select):
+    def plot_feature_ranking(self,feature_to_select,plot = False):
         
         classifier = RandomForestClassifier()
         estimator = RFE(estimator=classifier, n_features_to_select=feature_to_select)
@@ -90,37 +73,34 @@ class predictBase():
         for rank, feature in zip(estimator.ranking_,list(self.X_primary.columns)):
             featureRankingDic[feature] = rank
         print('###importance ranking###')
-        sorted_FRD = sorted(featureRankingDic.items(), key=lambda x: x[1])
+        sorted_feature_ranking = sorted(featureRankingDic.items(), key=lambda x: x[1])
         #print(sorted_FRD)
-        for key,val in sorted_FRD:
+        for key,val in sorted_feature_ranking:
             print(key + ":",val)
         
 
-        
-        Y = list(featureRankingDic.values())
-        X = np.arange(len(Y))
-        X_label = list(featureRankingDic.keys()) 
-        plt.plot(X, Y,'go')
-        plt.xticks(X,X_label,rotation = 90 , fontsize = 7)
+        if plot:
+            Y = list(featureRankingDic.values())
+            X = np.arange(len(Y))
+            X_label = list(featureRankingDic.keys()) 
+            plt.plot(X, Y,'go')
+            plt.xticks(X,X_label,rotation = 90 , fontsize = 7)
 
-        # Set the x-label
-        plt.xlabel('feature')
+            # Set the x-label
+            plt.xlabel('feature')
 
-        # Set the y-label
-        plt.ylabel('ranking')
+            # Set the y-label
+            plt.ylabel('ranking')
 
-        # Set the plot title
-        plt.title('feature importance ranking')
+            # Set the plot title
+            plt.title('feature importance ranking')
 
-        # Display the plot
-        plt.tight_layout()
-        plt.show()
-        plt.savefig('log/feature_ranking.pdf')
+            # Display the plot
+            plt.tight_layout()
+            plt.show()
+            plt.savefig('log/feature_ranking.pdf')
 
-
-
-
-        return estimator.support_, estimator.ranking_
+        return estimator.support_, estimator.ranking_, sorted_feature_ranking
 
 
     def predict(self):
@@ -128,6 +108,7 @@ class predictBase():
         self.predicted = self.estimator.predict(self.X_test)
         self.acc = accuracy_score(self.Y_test, self.predicted)
         print(self.acc)
+        return self.acc
         
 
     def wronglyPredicted(self):
@@ -158,22 +139,85 @@ class predictBase():
         
         return self.acc,self.X_train_length
     
-    def makeClassifierInstance(self,df):
-        NB = gaussianNB(df)
-        LR = logisticRegression(df)
-        RF = randomForest(df)
-        MLP = multiLayeredPerceptron(df)
-        NC = nearestCentroid(df)
-        KNN = kNearestNeighbors(df)
-        ADB = adaboost(df)
-        classifier_set = {NB,LR,RF,MLP,NC,KNN,ADB}
 
-        return classifier_set
-    
     def correlation(self):
         table = self.data
         df = table.pivot('aggregated_duration_nnconv2d', 'aggregated_percentage_nnconv2d', 'labe_model_name')
         sns.heatmap(table)
+
+
+    def plot_learning_curve(self,acc_text = True):
+        """
+        Plots the learning curve for a list of classifier objects using scikit-learn's learning_curve function.
+        """
+        fontdict= {'family': 'serif',
+        'color':  'darkred',
+        'weight': 'normal',
+        'size': 10,
+        }
+
+        estimators = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
+        plt.figure(figsize=(10, 6))
+        plt.title("Learning Curve opt level 1")
+        plt.xlabel("Training Examples")
+        plt.ylabel("Accuracy")
+
+        for estimator in estimators:
+            train_sizes, train_scores, test_scores = learning_curve(estimator, self.X, self.Y, n_jobs=-1, train_sizes=np.linspace(0.1, 1, 10),shuffle=True)
+            #train_scores_mean = np.mean(train_scores, axis=1)
+            test_scores_mean = np.mean(test_scores, axis=1)
+            plt.plot(train_sizes, test_scores_mean, label=type(estimator).__name__)
+            
+            
+            if acc_text:
+                for i, accuracy in enumerate(np.mean(test_scores, axis=1)):
+                    plt.text(train_sizes[i], accuracy, '{:.2f}'.format(accuracy),fontdict=fontdict)
+
+        plt.legend(loc="best")
+        plt.show()
+
+    def plot_num_of_features_acc(self):
+        # sample data for number of features and corresponding accuracy
+        num_features = [10, 20, 30, 40, 50]
+        accuracy = [0.78, 0.85, 0.89, 0.91, 0.93]
+
+        # create a line plot
+        plt.plot(num_features, accuracy)
+
+        # set the x-label and y-label
+        plt.xlabel('Number of Features')
+        plt.ylabel('Accuracy')
+
+        # add a title to the plot
+        plt.title('Accuracy vs. Number of Features')
+
+        # display the plot
+        plt.show()
+    
+    def plot_classifiers_accuracy(self,column_sets):
+
+        
+        classifiers = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
+        plt.figure(figsize=(10,6))
+        data = self.data
+        for clf in classifiers:
+            accuracies = []
+            for cols in column_sets:
+                X_train, X_test, y_train, y_test = train_test_split(data[cols], data['label_model_name'], train_size=0.1)
+                clf.fit(X_train, y_train)
+                y_pred = clf.predict(X_test)
+                accuracies.append(accuracy_score(y_test, y_pred))
+            plt.plot([len(cols) for cols in column_sets], accuracies, label=clf.__class__.__name__)
+        plt.xlabel('Number of features')
+        plt.xticks([1,4,7,10,13,16,19,22,25,28])
+        plt.ylabel('Accuracy')
+        plt.title('Accuracy of different classifiers opt level 0')
+        plt.legend()
+        plt.show()
+    
+
+
+
 
 
 
@@ -206,25 +250,45 @@ class adaboost(predictBase):
         super().__init__(df, normalization = normalization)
         self.classifier = AdaBoostClassifier()
 
+
+
     
 
 if __name__ == "__main__":
     
-    
+    run = 'number of feature vs accuracy'
     df = pd.read_csv('./pred_model_trainable_data.csv')
-    train_size = 0.3
-    '''
-    p=predictBase(df,normalization='minmax')
-    classifier_set = p.makeClassifierInstance(df=df)
-    score_func_li = [chi2,mutual_info_classif]
+    train_size = 0.5
+    
+    if run == 'learning curve':
+        p = predictBase(df)
+        #p.splitTrainTest(train_size)
+        p.plot_learning_curve()
+        #p.estimatorGeneration_RFE(1)
+    
+    if run == 'feature print':
+        print(df.columns)
+        print(len(df.columns))
 
-    for score_func in score_func_li:
-        p.select_k_best(2,score_func=score_func)
-    '''
+    
+    if run == 'number of feature vs accuracy':
+        p = predictBase(df)
+        p.splitTrainTest(train_size= 0.5)
+        _,_,feature_ranking_dict = p.plot_feature_ranking(1)
+        #print(feature_ranking_dict)
 
-    p = predictBase(df)
-    p.splitTrainTest(train_size)
-    p.estimatorGeneration_RFE(1)
+        features_tmp= list()
+        for i in range(len(feature_ranking_dict)):
+            features_tmp.append(feature_ranking_dict[i][0]) 
+        features = list()
+        for x in range(1,30,3):
+            features.append(features_tmp[:x])
+
+
+        p.plot_classifiers_accuracy(features)
+        #print(features)
+
+
     '''
     for classifier in classifier_set:
         classifier.splitTrainTest(train_size = train_size)
