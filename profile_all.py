@@ -3,12 +3,13 @@ from make_json import make_json
 
 import tvm_profiler
 
-run_iter = 20
+run_iter = 40
 input_shape = (3,224,224)
 local = False
-remove_half = True
-path = "/Volumes/PATRIOT/onnx_models"
-opt_level = 1
+remove_half = False
+#path = "/Volumes/PATRIOT/onnx_models"
+path = "/Users/kimdonghyub/tvm-workspace/model_extraction_tvm/dummy_inserted_models"
+opt_level = 0
 #path = "../onnx_models_int"
 #path = "../onnx_models"
 

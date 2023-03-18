@@ -26,11 +26,11 @@ class predictBase():
         
         if normalization:
             if normalization == 'minmax':
-                normalization = MinMaxScaler()
+                self.normalization = MinMaxScaler()
             elif normalization == 'standard':
-                normalization = StandardScaler()
+                self.normalization = StandardScaler()
             
-            self.X = normalization.fit_transform(self.X_primary)
+            self.X = self.normalization.fit_transform(self.X_primary)
         else: 
             self.X = self.X_primary.to_numpy()
         self.classifier = None
@@ -40,7 +40,7 @@ class predictBase():
     
     def splitTrainTest(self,train_size):
         X_train, X_test, Y_train, Y_test = train_test_split(
-            self.X, self.Y, random_state=31, train_size=train_size
+            self.X, self.Y, random_state=5, train_size=train_size
         )
         self.X_train = X_train
         self.X_test = X_test
@@ -56,7 +56,9 @@ class predictBase():
     def estimatorGeneration(self): 
         
         self.estimator = self.classifier.fit(self.X_train, self.Y_train)
-        self.importances = self.estimator.feature_importances_
+        
+    
+
 
     def plot_feature_ranking(self,feature_to_select,plot = False):
         
@@ -176,24 +178,7 @@ class predictBase():
         plt.legend(loc="best")
         plt.show()
 
-    def plot_num_of_features_acc(self):
-        # sample data for number of features and corresponding accuracy
-        num_features = [10, 20, 30, 40, 50]
-        accuracy = [0.78, 0.85, 0.89, 0.91, 0.93]
-
-        # create a line plot
-        plt.plot(num_features, accuracy)
-
-        # set the x-label and y-label
-        plt.xlabel('Number of Features')
-        plt.ylabel('Accuracy')
-
-        # add a title to the plot
-        plt.title('Accuracy vs. Number of Features')
-
-        # display the plot
-        plt.show()
-    
+   
     def plot_classifiers_accuracy(self,column_sets):
 
         
@@ -215,11 +200,67 @@ class predictBase():
         plt.legend()
         plt.show()
     
+    def mitigation(self):
+        # Read the CSV file into a pandas DataFrame
+        df = pd.read_csv('resnet18_dummy.csv')
+        # Read the CSV file into a pandas dataframe
+        df = df.reindex(columns=self.data.columns, fill_value=0)
+        df.to_csv('dummy_inserted_reindexed.csv')
+        
 
+        # Split the dataframe into different variables based on the values in the "label_model_name" column
+        dummy0 = df[df['label_model_name'] == 'resnet18_dummy0.onnx']
+        dummy1 = df[df['label_model_name'] == 'resnet18_dummy1.onnx']
+        dummy2 = df[df['label_model_name'] == 'resnet18_dummy2.onnx']
+        dummy3 = df[df['label_model_name'] == 'resnet18_dummy3.onnx']
+        dummy4 = df[df['label_model_name'] == 'resnet18_dummy4.onnx']
+        dummy5 = df[df['label_model_name'] == 'resnet18_dummy5.onnx']
+        dummy6 = df[df['label_model_name'] == 'resnet18_dummy6.onnx']
+        dummy7 = df[df['label_model_name'] == 'resnet18_dummy7.onnx']
+        dummy8 = df[df['label_model_name'] == 'resnet18_dummy8.onnx']
+        dummy9 = df[df['label_model_name'] == 'resnet18_dummy9.onnx']
+        dummy10 = df[df['label_model_name'] == 'resnet18_dummy10.onnx']
+        dummy11 = df[df['label_model_name'] == 'resnet18_dummy11.onnx']
+        dummy12 = df[df['label_model_name'] == 'resnet18_dummy12.onnx']
+        dummy13 = df[df['label_model_name'] == 'resnet18_dummy13.onnx']
+        dummy14 = df[df['label_model_name'] == 'resnet18_dummy14.onnx']
+        dummy15 = df[df['label_model_name'] == 'resnet18_dummy15.onnx']
 
+        dummy_list = [dummy0,dummy1,dummy2,dummy3,dummy4,dummy5,dummy6,dummy7,dummy8,dummy9,dummy10,dummy11,dummy12,dummy13,dummy14,dummy15]
+        
 
+        for data in dummy_list:
+            data['label_model_name'] = 'resnet18.onnx' #we have to do it here. so we can split various dummy number
+        
+        self.dummy_list = dummy_list
+        plt.figure(figsize=(10,6))
+        estimators = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
+        for estimator in estimators:
+            
+            estimator.fit(self.X_train, self.Y_train)
+            print(estimator)
+            accuracies = []
+            for dummy in dummy_list:
+                
+                Y_dummy = dummy['label_model_name'].to_numpy()
+                X_dummy = dummy.drop(['label_model_name'], axis = 'columns').to_numpy()
+                
+                #X_dummy = self.normalization.fit_transform(X_dummy)
 
-
+                predicted = estimator.predict(X_dummy)
+                print(predicted)
+                acc = accuracy_score(Y_dummy, predicted)
+                print(acc)
+                accuracies.append(acc)
+            plt.plot([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], accuracies, label=estimator.__class__.__name__)
+        plt.xlabel('Number of dummy conv2')
+        plt.xticks([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])
+        plt.ylabel('Accuracy')
+        plt.title('Accuracy of different estimators with different number of dummies')
+        plt.legend()
+        plt.show()
+        return dummy_list
+        
 
 class gaussianNB(predictBase):
     def __init__(self,df, normalization = 'standard'):
@@ -256,10 +297,24 @@ class adaboost(predictBase):
 
 if __name__ == "__main__":
     
-    run = 'number of feature vs accuracy'
+    run = 'mitigation'
     df = pd.read_csv('./pred_model_trainable_data.csv')
-    train_size = 0.5
-    
+    train_size = 0.3
+
+    if run == 'wrongly_predicted':
+        LR =logisticRegression(df)
+        AB = adaboost(df)
+        MLP = multiLayeredPerceptron(df)
+        
+        e = MLP
+        e.splitTrainTest(train_size=train_size)
+        e.estimatorGeneration()
+        e.predict()
+        e.wronglyPredicted()
+    if run == 'mitigation':
+        p = predictBase(df,normalization = None)
+        p.splitTrainTest(train_size)
+        p.mitigation()
     if run == 'learning curve':
         p = predictBase(df)
         #p.splitTrainTest(train_size)

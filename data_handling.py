@@ -8,12 +8,12 @@ def model_selector(path):
     #/directory/of/models
     
     onnx_model_list = os.listdir(path)
-    print('list of onnx models be profiled')
     target = ".onnx"
     onnx_model_list = leave_target_only(onnx_model_list,target)
-    print(onnx_model_list)
     
-
+    print('list of onnx models be profiled')
+    onnx_model_list.sort()
+    print(onnx_model_list)
     return onnx_model_list
 def remove_white_space(filename):
     with open(filename, "r") as file:
