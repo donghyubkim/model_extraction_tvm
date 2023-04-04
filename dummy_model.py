@@ -14,8 +14,10 @@ def generate_dummy_inserted(num_of_dummy):
         param.requires_grad = False
 
     # Insert new convolutional layers after the first convolutional layer in the ResNet18 model
-    new_conv = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1)
 
+    #new_conv = nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1) #right after first con2d
+    new_conv = nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1) # in between 3rd and 4th layer
+ 
     if num_of_dummy == 1:
     # 1 dummies
         #model.conv1 = nn.Sequential(model.conv1, new_conv)

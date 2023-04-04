@@ -93,12 +93,15 @@ def csv_merger_cleaner(filename, fillna0 = True, delete_aggregated_result_dir_fi
         pass
 
 
-def aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx):
+def aggregated_result_writer(model,layer_information_dict,run_count,truncate_dotonnx,victim_profile_mode = False):
     '''
     using aggregated result dictionary write it onto .csv file multiple times
     
     '''
-    folder_name = './aggregated_results/result_{}.csv'.format(model[:truncate_dotonnx])
+    if victim_profile_mode:
+        folder_name = './aggregated_results/result_victim.csv'
+    else:
+        folder_name = './aggregated_results/result_{}.csv'.format(model[:truncate_dotonnx])
 
     with open(folder_name, 'a') as csvfile: #truncate .onnx in the csv filename
             writer = csv.DictWriter(csvfile, fieldnames=layer_information_dict.keys())
@@ -123,14 +126,17 @@ def remove_half(filename): #because of some unknown error that showing 0 s and n
     df.to_csv(filename+'_half_removed', index=False)
     
 
-def aggregate_data() :
+def aggregate_data( victim_profile_mode = False) :
     '''
     Read from very first profiled data and aggregate them
     Return aggregated Dictionary as Dict[key: Aggregated layer name,value: summation of same layers]
     '''
     data_list = list()
     aggregated_layer_list = list()
-    f = open('./profiling_result/result_full.csv','r',encoding="utf-8")
+    if victim_profile_mode:
+        f = open('./profiling_result/victim_result_full.csv','r',encoding="utf-8")
+    else:
+        f = open('./profiling_result/result_full.csv','r',encoding="utf-8")
     reader = csv.reader(f)
     remove_set = ("")
     #print("From")

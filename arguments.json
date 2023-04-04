@@ -9,8 +9,8 @@
 		1000
 	],
 	"batch_size": 1,
-	"model_path": "/Users/kimdonghyub/tvm-workspace/model_extraction_tvm/dummy_inserted_models/resnet18_dummy15.onnx",
-	"optimization_level": 0,
+	"model_path": "/Volumes/PATRIOT/onnx_models/1000_output_classes//alexnet.onnx",
+	"optimization_level": 3,
 	"local": false,
 	"local_host": "llvm",
 	"target_host": "llvm -mtriple=aarch64-conda-linux-gnu",

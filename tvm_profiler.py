@@ -96,11 +96,11 @@ class tvm_profiler:
         # uploading model library(binary) to remote runtime
         print("loading generated lib to runtime ...")
         temp = utils.tempdir()
-        path = temp.relpath("lib.tar")
+        path = temp.relpath("lib.tar") #Actual path
         self.lib.export_library(path)
         remote.upload(path)
 
-        self.remote_lib = remote.load_module("lib.tar")
+        self.remote_lib = remote.load_module("lib.tar") # Runtime
         #tvm.runtime.Module encapsulates the result of compilation.
         #A runtime.Module contains a GetFunction method to obtain PackedFuncs by name.
         print("successfully loaded model library")

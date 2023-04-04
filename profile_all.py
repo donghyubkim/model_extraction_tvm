@@ -3,13 +3,14 @@ from make_json import make_json
 
 import tvm_profiler
 
-run_iter = 40
+run_iter = 20
 input_shape = (3,224,224)
 local = False
-remove_half = False
+remove_half = True
 #path = "/Volumes/PATRIOT/onnx_models"
-path = "/Users/kimdonghyub/tvm-workspace/model_extraction_tvm/dummy_inserted_models"
-opt_level = 0
+path = "/Volumes/PATRIOT/onnx_models/1000_output_classes/"
+opt_level = 3
+output_shape = (1,1000)
 #path = "../onnx_models_int"
 #path = "../onnx_models"
 
@@ -24,7 +25,7 @@ for index,model in enumerate(onnx_model_list):
 
     try:
         profiler = tvm_profiler.tvm_profiler() #if out of this for loop (without initialization) we wait forever.
-        make_json(model = model,path = path,input_shape=input_shape,local=local,opt_level=opt_level)
+        make_json(model = model,path = path,input_shape=input_shape,local=local,opt_level=opt_level,output_shape=output_shape)
         profiler.compile()
         run_count = 1
         truncate_length = -(len(model.split('.')[-1]) +1) # to truncate .onnx from csv filename 

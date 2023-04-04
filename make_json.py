@@ -1,4 +1,4 @@
-def make_json(model,path,input_shape,local,opt_level):
+def make_json(model,path,input_shape,local,opt_level,output_shape):
 
     import json
     from collections import OrderedDict
@@ -6,7 +6,7 @@ def make_json(model,path,input_shape,local,opt_level):
     file_data = OrderedDict()
     
     file_data["input_shape"] = input_shape
-    file_data["output_shape"] = (1, 1000)
+    file_data["output_shape"] = output_shape
     file_data["batch_size"] = 1
     
     file_data["model_path"] = path+'/'+model

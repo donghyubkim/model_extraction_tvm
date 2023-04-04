@@ -15,7 +15,9 @@ from sklearn.preprocessing import StandardScaler,MinMaxScaler
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':['Times'], 'size': 14})
+rc('figure', **{'figsize': (5, 4)})
 class predictBase():
     def __init__(self, df, normalization = 'standard') -> None:
         
@@ -111,6 +113,13 @@ class predictBase():
         self.acc = accuracy_score(self.Y_test, self.predicted)
         print(self.acc)
         return self.acc
+    
+    def predict_victim(self,victim_df):
+        victim_df = victim_df.drop(['label_model_name'], axis = 'columns')
+        self.predicted = self.estimator.predict(self.X_test)
+        self.acc = accuracy_score(self.Y_test, self.predicted)
+        print(self.acc)
+        return self.acc
         
 
     def wronglyPredicted(self):
@@ -147,35 +156,68 @@ class predictBase():
         df = table.pivot('aggregated_duration_nnconv2d', 'aggregated_percentage_nnconv2d', 'labe_model_name')
         sns.heatmap(table)
 
+    def binning(self):
+        print(self.X_primary)
+
+        self.X_primary = self.X_primary.drop(['total_duration','total_count','total_percentage'], axis = 'columns')
+        def binning_internal(row):
+            group1 = group2 = group3 = group4 = 0
+            for col in row.index:
+                if 'conv2d' in col:
+                    if 'duration' in col:
+                        group1 += row[col]
+                    elif 'count' in col:
+                        group2 += row[col]
+                else:
+                    if 'duration' in col:
+                        group3 += row[col]
+                    elif 'count' in col:
+                        group4 += row[col]
+            return pd.Series({'group1': group1, 'group2': group2, 'group3': group3, 'group4': group4})
+
+        # apply the binning function to each row
+        self.X = pd.DataFrame({})
+        self.X[['convolution_duration', 'convolution_count', 'non_convolution_duration', 'non_convolution_count']] = self.X_primary.apply(binning_internal, axis=1)
+        print(self.X)
+        self.normalization = StandardScaler()
+            
+        self.X = self.normalization.fit_transform(self.X)
+        
+            
+        print(self.X)
+
 
     def plot_learning_curve(self,acc_text = True):
         """
         Plots the learning curve for a list of classifier objects using scikit-learn's learning_curve function.
         """
-        fontdict= {'family': 'serif',
-        'color':  'darkred',
-        'weight': 'normal',
-        'size': 10,
-        }
+        
 
         estimators = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
-        plt.figure(figsize=(10, 6))
-        plt.title("Learning Curve opt level 1")
-        plt.xlabel("Training Examples")
-        plt.ylabel("Accuracy")
+        #plt.figure(figsize=(10, 6))
+        clfname_dict = {'LogisticRegression': 'lr', 'MLPClassifier': 'nn', 'KNeighborsClassifier': 'knn', 'NearestCentroid': 'centroid', 'GaussianNB': 'nb', 'RandomForestClassifier': 'rf', 'AdaBoostClassifier': 'ab'}
+        #plt.title("Train with binned 4 features")
+        plt.title("")
+        plt.xlabel("Number of Profiles per Architecture in Training Dataset")
+        plt.ylabel("Architecture Prediction Accuracy")
 
         for estimator in estimators:
-            train_sizes, train_scores, test_scores = learning_curve(estimator, self.X, self.Y, n_jobs=-1, train_sizes=np.linspace(0.1, 1, 10),shuffle=True)
+            train_sizes, train_scores, test_scores = learning_curve(estimator, self.X, self.Y, n_jobs=-1, train_sizes=np.linspace(1/20, 1, 20),shuffle=True)
             #train_scores_mean = np.mean(train_scores, axis=1)
+            train_sizes = np.arange(1,21)
             test_scores_mean = np.mean(test_scores, axis=1)
-            plt.plot(train_sizes, test_scores_mean, label=type(estimator).__name__)
+            print(train_sizes)
+            plt.plot(train_sizes, test_scores_mean, label=clfname_dict[type(estimator).__name__])
             
-            
+            '''
             if acc_text:
                 for i, accuracy in enumerate(np.mean(test_scores, axis=1)):
                     plt.text(train_sizes[i], accuracy, '{:.2f}'.format(accuracy),fontdict=fontdict)
-
-        plt.legend(loc="best")
+            '''
+        
+        plt.legend(loc="lower right")
+        plt.tight_layout()
+        plt.savefig("learning_curve_4", dpi=500, bbox_inches="tight")
         plt.show()
 
    
@@ -183,21 +225,25 @@ class predictBase():
 
         
         classifiers = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
-        plt.figure(figsize=(10,6))
+        #plt.figure(figsize=(10,6))
         data = self.data
+        clfname_dict = {'LogisticRegression': 'lr', 'MLPClassifier': 'nn', 'KNeighborsClassifier': 'knn', 'NearestCentroid': 'centroid', 'GaussianNB': 'nb', 'RandomForestClassifier': 'rf', 'AdaBoostClassifier': 'ab'}
         for clf in classifiers:
             accuracies = []
             for cols in column_sets:
-                X_train, X_test, y_train, y_test = train_test_split(data[cols], data['label_model_name'], train_size=0.1)
+                X_train, X_test, y_train, y_test = train_test_split(data[cols], data['label_model_name'], train_size=0.5)
                 clf.fit(X_train, y_train)
                 y_pred = clf.predict(X_test)
                 accuracies.append(accuracy_score(y_test, y_pred))
-            plt.plot([len(cols) for cols in column_sets], accuracies, label=clf.__class__.__name__)
-        plt.xlabel('Number of features')
+            plt.plot([len(cols) for cols in column_sets], accuracies, label=clfname_dict[clf.__class__.__name__])
+        print(clf.__class__.__name__)
+        plt.xlabel('Number of Features to Train Architecture Prediction Model')
         plt.xticks([1,4,7,10,13,16,19,22,25,28])
-        plt.ylabel('Accuracy')
-        plt.title('Accuracy of different classifiers opt level 0')
-        plt.legend()
+        plt.ylabel('Architecture Prediction Accuracy')
+        plt.title('')
+        plt.legend(loc = "lower right")
+        plt.tight_layout()
+        plt.savefig("Accuracy_num_of_feature", dpi=500, bbox_inches="tight")
         plt.show()
     
     def mitigation(self):
@@ -260,7 +306,25 @@ class predictBase():
         plt.legend()
         plt.show()
         return dummy_list
+    def class_10(self):
+        df = pd.read_csv('class_10.csv')
+
         
+        plt.figure(figsize=(10,6))
+        estimators = [GaussianNB(),LogisticRegression(),RandomForestClassifier(),MLPClassifier(),NearestCentroid(),KNeighborsClassifier(),AdaBoostClassifier()]
+        for estimator in estimators:
+            
+            estimator.fit(self.X_train, self.Y_train)
+            print(estimator)
+            accuracies = []
+            Y = df['label_model_name'].to_numpy()
+            X = df.drop(['label_model_name'], axis = 'columns').to_numpy()
+            
+            #X_dummy = self.normalization.fit_transform(X_dummy)
+            predicted = estimator.predict(X)
+            print(predicted)
+            acc = accuracy_score(Y, predicted)
+            print(acc)
 
 class gaussianNB(predictBase):
     def __init__(self,df, normalization = 'standard'):
@@ -297,10 +361,14 @@ class adaboost(predictBase):
 
 if __name__ == "__main__":
     
-    run = 'mitigation'
-    df = pd.read_csv('./pred_model_trainable_data.csv')
-    train_size = 0.3
-
+    run = 'number of feature vs accuracy'
+    df = pd.read_csv('./golden/optlevel0/pred_model_trainable_data.csv')
+    
+    train_size = 0.5
+    if run == 'predict_victim':
+        victim_df = pd.read_csv('./aggregated_results/result_victim.csv')
+        p = predictBase(df)
+        p.splitTrainTest(train_size)
     if run == 'wrongly_predicted':
         LR =logisticRegression(df)
         AB = adaboost(df)
@@ -320,6 +388,13 @@ if __name__ == "__main__":
         #p.splitTrainTest(train_size)
         p.plot_learning_curve()
         #p.estimatorGeneration_RFE(1)
+
+    if run == 'learning curve binning':
+        p = predictBase(df)
+        #p.splitTrainTest(train_size)
+        p.binning()
+        p.plot_learning_curve()
+        
     
     if run == 'feature print':
         print(df.columns)
@@ -342,7 +417,13 @@ if __name__ == "__main__":
 
         p.plot_classifiers_accuracy(features)
         #print(features)
-
+    if run == 'top k features':
+        NB = randomForest(df)
+        classifier = NB
+        classifier.splitTrainTest(train_size = train_size)
+        classifier.estimatorGeneration()
+        classifier.plot_feature_ranking(feature_to_select = 1,plot = False)
+        classifier.predict()
 
     '''
     for classifier in classifier_set:
