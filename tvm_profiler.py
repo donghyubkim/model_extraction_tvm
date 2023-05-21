@@ -119,14 +119,14 @@ class tvm_profiler:
         self.profiler = debug_executor.create(self.lib.get_graph_json(), self.remote_lib, self.dev)
         
 
-    def run(self) -> None:
+    def run(self,n="") -> None:
         ## profiler run1
         
         report = self.profiler.profile(data=self.device_input_data)
         report_table_full = report.csv()
 
         # writing to csv file 
-        with open("./profiling_result/result_full.csv", 'w') as out:
+        with open("./profiling_result/mnas1_0_{}.csv".format(n), 'w') as out:
             out.write(report_table_full) #we are using this one to aggregate
         #with open("./profiling_result/result_neat.csv", 'w') as out:
             #out.write(report_table_neat) #this one, tried, but doesn't work for some models (ex googlenet)
@@ -153,4 +153,9 @@ class tvm_profiler:
 if __name__ == "__main__":
     t = tvm_profiler()
     t.compile()
-    t.run()
+    t.run(1)
+    t.run(2)
+    t.run(3)
+    t.run(4)
+    t.run(5)
+    t.run("victim")

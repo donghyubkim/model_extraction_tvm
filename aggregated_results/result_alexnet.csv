@@ -1,5 +1,0 @@
-aggregated_duration_nnconv2daddnnrelu,aggregated_percentage_nnconv2daddnnrelu,aggregated_count_nnconv2daddnnrelu,total_duration,total_percentage,total_count,aggregated_duration_nnmaxpool2d,aggregated_percentage_nnmaxpool2d,aggregated_count_nnmaxpool2d,aggregated_duration_nnavgpool2d,aggregated_percentage_nnavgpool2d,aggregated_count_nnavgpool2d,aggregated_duration_nndenseaddnnrelu,aggregated_percentage_nndenseaddnnrelu,aggregated_count_nndenseaddnnrelu,aggregated_duration_nndenseadd,aggregated_percentage_nndenseadd,aggregated_count_nndenseadd,label_model_name
-1264405.6,64.6491,5.0,1955795.9170000001,99.99988698300002,12.0,466.32599999999996,0.02384332,3.0,11.161,0.000570663,1.0,684744.0,35.01096,2.0,6168.83,0.315413,1.0,alexnet.onnx
-0.0,nan,5.0,0.0,nan,12.0,0.0,nan,3.0,0.0,nan,1.0,0.0,nan,2.0,0.0,nan,1.0,alexnet.onnx
-1279050.6,64.99604,5.0,1967889.727,100.00003631300001,12.0,467.56600000000003,0.023759810000000003,3.0,10.361,0.000526503,1.0,682208.0,34.66703,2.0,6153.2,0.31268,1.0,alexnet.onnx
-0.0,nan,5.0,0.0,nan,12.0,0.0,nan,3.0,0.0,nan,1.0,0.0,nan,2.0,0.0,nan,1.0,alexnet.onnx

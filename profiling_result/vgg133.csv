@@ -1,0 +1,46 @@
+Argument Shapes,Count,Device,Duration (us),Hash,Name,Percent,data_layout,kernel_layout,layout,out_layout
+"float32[1, 3, 224, 224], float32[64, 3, 3, 3], float32[1, 64, 224, 224]",1,"opencl0",70362.4,"98334219283a64cf","tvmgen_default_fused_nn_conv2d",1.81351,"NCHW","OIHW",,""
+"float32[1, 64, 224, 224], float32[64], float32[1, 64, 224, 224]",1,"opencl0",5138.51,"5fb4e90c5f1a0d23","tvmgen_default_fused_nn_bias_add",0.132439,,,,
+"float32[1, 64, 224, 224], float32[1, 64, 224, 224]",1,"opencl0",5004.3,"de5d3359bcb15743","tvmgen_default_fused_nn_relu",0.12898,,,,
+"float32[1, 64, 224, 224], float32[64, 64, 3, 3], float32[1, 64, 224, 224]",1,"opencl0",385159,"84094f9c15a717f2","tvmgen_default_fused_nn_conv2d_1",9.92701,"NCHW","OIHW",,""
+"float32[1, 64, 224, 224], float32[64], float32[1, 64, 224, 224]",1,"opencl0",5155.42,"5fb4e90c5f1a0d23","tvmgen_default_fused_nn_bias_add",0.132875,,,,
+"float32[1, 64, 224, 224], float32[1, 64, 224, 224]",1,"opencl0",5022.96,"de5d3359bcb15743","tvmgen_default_fused_nn_relu",0.129461,,,,
+"float32[1, 64, 224, 224], float32[1, 64, 112, 112]",1,"opencl0",2222.05,"66b15f13bd0ef16f","tvmgen_default_fused_nn_max_pool2d",0.0572707,,,"NCHW",""
+"float32[1, 64, 112, 112], float32[128, 64, 3, 3], float32[1, 128, 112, 112]",1,"opencl0",138812,"6c949953cd28320d","tvmgen_default_fused_nn_conv2d_2",3.57771,"NCHW","OIHW",,""
+"float32[1, 128, 112, 112], float32[128], float32[1, 128, 112, 112]",1,"opencl0",2440.91,"42803c08d82f336b","tvmgen_default_fused_nn_bias_add_1",0.0629115,,,,
+"float32[1, 128, 112, 112], float32[1, 128, 112, 112]",1,"opencl0",2340.72,"6906d3b37d08f0fb","tvmgen_default_fused_nn_relu_1",0.0603294,,,,
+"float32[1, 128, 112, 112], float32[128, 128, 3, 3], float32[1, 128, 112, 112]",1,"opencl0",223803,"99d5efd7af165ec2","tvmgen_default_fused_nn_conv2d_3",5.76825,"NCHW","OIHW",,""
+"float32[1, 128, 112, 112], float32[128], float32[1, 128, 112, 112]",1,"opencl0",2417.53,"42803c08d82f336b","tvmgen_default_fused_nn_bias_add_1",0.062309,,,,
+"float32[1, 128, 112, 112], float32[1, 128, 112, 112]",1,"opencl0",2362.51,"6906d3b37d08f0fb","tvmgen_default_fused_nn_relu_1",0.0608908,,,,
+"float32[1, 128, 112, 112], float32[1, 128, 56, 56]",1,"opencl0",1142.22,"abf726ad48a565ba","tvmgen_default_fused_nn_max_pool2d_1",0.0294393,,,"NCHW",""
+"float32[1, 128, 56, 56], float32[256, 128, 3, 3], float32[1, 256, 56, 56]",1,"opencl0",85455.7,"c91f4f33877bc26b","tvmgen_default_fused_nn_conv2d_4",2.20252,"NCHW","OIHW",,""
+"float32[1, 256, 56, 56], float32[256], float32[1, 256, 56, 56]",1,"opencl0",1157.57,"fdcc6546a3583528","tvmgen_default_fused_nn_bias_add_2",0.0298349,,,,
+"float32[1, 256, 56, 56], float32[1, 256, 56, 56]",1,"opencl0",1131.45,"2920dd789f380081","tvmgen_default_fused_nn_relu_2",0.0291617,,,,
+"float32[1, 256, 56, 56], float32[256, 256, 3, 3], float32[1, 256, 56, 56]",1,"opencl0",175372,"ffc9f017a80622a4","tvmgen_default_fused_nn_conv2d_5",4.52001,"NCHW","OIHW",,""
+"float32[1, 256, 56, 56], float32[256], float32[1, 256, 56, 56]",1,"opencl0",1160.79,"fdcc6546a3583528","tvmgen_default_fused_nn_bias_add_2",0.029918,,,,
+"float32[1, 256, 56, 56], float32[1, 256, 56, 56]",1,"opencl0",1127.18,"2920dd789f380081","tvmgen_default_fused_nn_relu_2",0.0290517,,,,
+"float32[1, 256, 56, 56], float32[1, 256, 28, 28]",1,"opencl0",525.697,"40b91251aa1c0102","tvmgen_default_fused_nn_max_pool2d_2",0.0135492,,,"NCHW",""
+"float32[1, 256, 28, 28], float32[512, 256, 3, 3], float32[1, 512, 28, 28]",1,"opencl0",97745.1,"268accfd24b422b1","tvmgen_default_fused_nn_conv2d_6",2.51927,"NCHW","OIHW",,""
+"float32[1, 512, 28, 28], float32[512], float32[1, 512, 28, 28]",1,"opencl0",548.824,"2b44fee34eaf69ef","tvmgen_default_fused_nn_bias_add_3",0.0141453,,,,
+"float32[1, 512, 28, 28], float32[1, 512, 28, 28]",1,"opencl0",519.037,"a10fb7f10331e950","tvmgen_default_fused_nn_relu_3",0.0133776,,,,
+"float32[1, 512, 28, 28], float32[512, 512, 3, 3], float32[1, 512, 28, 28]",1,"opencl0",197634,"f51be02cf276d976","tvmgen_default_fused_nn_conv2d_7",5.09379,"NCHW","OIHW",,""
+"float32[1, 512, 28, 28], float32[512], float32[1, 512, 28, 28]",1,"opencl0",539.179,"2b44fee34eaf69ef","tvmgen_default_fused_nn_bias_add_3",0.0138967,,,,
+"float32[1, 512, 28, 28], float32[1, 512, 28, 28]",1,"opencl0",525.896,"a10fb7f10331e950","tvmgen_default_fused_nn_relu_3",0.0135544,,,,
+"float32[1, 512, 28, 28], float32[1, 512, 14, 14]",1,"opencl0",291.455,"a58460573dd02317","tvmgen_default_fused_nn_max_pool2d_3",0.00751191,,,"NCHW",""
+"float32[1, 512, 14, 14], float32[512, 512, 3, 3], float32[1, 512, 14, 14]",1,"opencl0",66690.6,"dcb4a671a8ae35ab","tvmgen_default_fused_nn_conv2d_8",1.71887,"NCHW","OIHW",,""
+"float32[1, 512, 14, 14], float32[512], float32[1, 512, 14, 14]",1,"opencl0",131.347,"b2f20ddb1e69950e","tvmgen_default_fused_nn_bias_add_4",0.00338531,,,,
+"float32[1, 512, 14, 14], float32[1, 512, 14, 14]",1,"opencl0",121.103,"3ebbf1e0ac63ab24","tvmgen_default_fused_nn_relu_4",0.00312129,,,,
+"float32[1, 512, 14, 14], float32[512, 512, 3, 3], float32[1, 512, 14, 14]",1,"opencl0",66345.2,"dcb4a671a8ae35ab","tvmgen_default_fused_nn_conv2d_8",1.70997,"NCHW","OIHW",,""
+"float32[1, 512, 14, 14], float32[512], float32[1, 512, 14, 14]",1,"opencl0",130.875,"b2f20ddb1e69950e","tvmgen_default_fused_nn_bias_add_4",0.00337315,,,,
+"float32[1, 512, 14, 14], float32[1, 512, 14, 14]",1,"opencl0",124.66,"3ebbf1e0ac63ab24","tvmgen_default_fused_nn_relu_4",0.00321296,,,,
+"float32[1, 512, 14, 14], float32[1, 512, 7, 7]",1,"opencl0",81.993,"87a86a9ad44973a5","tvmgen_default_fused_nn_max_pool2d_4",0.00211327,,,"NCHW",""
+"float32[1, 512, 7, 7], float32[1, 512, 7, 7]",1,"opencl0",41.076,"e1e4a3e4139cb89a","tvmgen_default_fused_nn_avg_pool2d",0.00105869,,,"NCHW",""
+"float32[1, 512, 7, 7], float32[1, 25088]",1,"opencl0",0,"09bd02bb717a7c68","__nop",0,,,,
+"float32[1, 25088], float32[4096, 25088], float32[1, 4096]",1,"opencl0",2.20263e+06,"032fc0d6fe9323d0","tvmgen_default_fused_nn_dense",56.7702,,,,
+"float32[1, 4096], float32[4096], float32[1, 4096]",1,"opencl0",8.383,"53e9bd0835ae2e21","tvmgen_default_fused_add",0.000216062,,,,
+"float32[1, 4096], float32[1, 4096]",1,"opencl0",5.282,"dcf458679b2083c9","tvmgen_default_fused_nn_relu_5",0.000136137,,,,
+"float32[1, 4096], float32[4096, 4096], float32[1, 4096]",1,"opencl0",122529,"758238b671313694","tvmgen_default_fused_nn_dense_1",3.15805,,,,
+"float32[1, 4096], float32[4096], float32[1, 4096]",1,"opencl0",8.009,"53e9bd0835ae2e21","tvmgen_default_fused_add",0.000206423,,,,
+"float32[1, 4096], float32[1, 4096]",1,"opencl0",5.704,"dcf458679b2083c9","tvmgen_default_fused_nn_relu_5",0.000147014,,,,
+"float32[1, 4096], float32[1000, 4096], float32[1, 1000]",1,"opencl0",5931.91,"8a835404ccb3a9f1","tvmgen_default_fused_nn_dense_2",0.152888,,,,
+"float32[1, 1000], float32[1000], float32[1, 1000]",1,"opencl0",4.397,"cdf93cc9b3c4974f","tvmgen_default_fused_add_1",0.000113328,,,,

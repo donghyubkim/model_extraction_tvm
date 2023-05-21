@@ -9,12 +9,12 @@
 		1000
 	],
 	"batch_size": 1,
-	"model_path": "/Volumes/PATRIOT/onnx_models/1000_output_classes//alexnet.onnx",
-	"optimization_level": 3,
+	"model_path": "/Volumes/PATRIOT/onnx_models/1000_output_classes/mnasnet1_3.onnx",
+	"optimization_level": 0,
 	"local": false,
 	"local_host": "llvm",
 	"target_host": "llvm -mtriple=aarch64-conda-linux-gnu",
 	"target_gpu": "opencl -device=mali",
 	"rpc_ip_address": "192.168.1.189",
-	"rpc_port": 9090
+	"rpc_port": 9091
 }
